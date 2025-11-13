@@ -1,0 +1,1697 @@
+2025-11-11 21:50:03 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:50:03 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-11 21:50:03 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-11 21:50:03 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-11 21:50:03 [INFO] RUN: ip link del br-test-prod || true
+2025-11-11 21:50:22 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:50:22 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-11 21:50:22 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-11 21:50:22 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-11 21:50:22 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-11 21:50:22 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-11 21:50:22 [INFO] RUN: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-pub netns dev-vpc-public
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-brp master br-dev-vpc
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-brp up
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev veth-pub
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-public ip link set veth-pub up
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev veth-pub
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-11 21:50:22 [INFO] RUN: ip link add veth-priv type veth peer name veth-brv
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-priv netns dev-vpc-private
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-brv master br-dev-vpc
+2025-11-11 21:50:22 [INFO] RUN: ip link set veth-brv up
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev veth-priv
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-private ip link set veth-priv up
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev veth-priv
+2025-11-11 21:50:22 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-11 21:50:22 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-11 21:50:22 [INFO] net.ipv4.ip_forward = 1
+2025-11-11 21:50:22 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-11 21:50:41 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:50:41 [INFO] RUN: ip link add peerv1-test-pr type veth peer name peerv2-dev-vpc
+2025-11-11 21:50:41 [INFO] RUN: ip link set peerv1-test-pr master br-test-prod
+2025-11-11 21:50:41 [ERROR] Command failed: ip link set peerv1-test-pr master br-test-prod
+2025-11-11 21:50:41 [ERROR] Error: argument "br-test-prod" is wrong: Device does not exist
+2025-11-11 21:53:32 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:53:32 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-11 21:53:32 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-11 21:53:32 [INFO] RUN: ip link set br-test-prod up
+2025-11-11 21:53:32 [INFO] RUN: ip netns add test-prod-public
+2025-11-11 21:53:32 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-11 21:53:32 [INFO] RUN: ip netns add test-prod-private
+2025-11-11 21:53:32 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-11 21:53:32 [INFO] RUN: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:53:32 [ERROR] Command failed: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:53:32 [ERROR] RTNETLINK answers: File exists
+2025-11-11 21:54:10 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:54:10 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-11 21:54:10 [WARNING] Error: ipv4: Address already assigned.
+2025-11-11 21:54:10 [INFO] RUN: ip link set br-test-prod up
+2025-11-11 21:54:10 [INFO] RUN: ip netns add test-prod-public
+2025-11-11 21:54:10 [ERROR] Command failed: ip netns add test-prod-public
+2025-11-11 21:54:10 [ERROR] Cannot create namespace file "/run/netns/test-prod-public": File exists
+2025-11-11 21:54:48 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:54:49 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-11 21:54:49 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-11 21:54:49 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-11 21:54:49 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-11 21:54:49 [INFO] RUN: ip link del br-test-prod || true
+2025-11-11 21:55:09 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:55:09 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-11 21:55:09 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-11 21:55:09 [INFO] RUN: ip link set br-test-prod up
+2025-11-11 21:55:09 [INFO] RUN: ip netns add test-prod-public
+2025-11-11 21:55:09 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-11 21:55:09 [INFO] RUN: ip netns add test-prod-private
+2025-11-11 21:55:09 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-11 21:55:09 [INFO] RUN: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:55:09 [ERROR] Command failed: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:55:09 [ERROR] RTNETLINK answers: File exists
+2025-11-11 21:55:31 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:55:31 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-11 21:55:31 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-11 21:55:31 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-11 21:55:31 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-11 21:55:31 [INFO] RUN: ip link del br-test-prod || true
+2025-11-11 21:56:03 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:56:03 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-11 21:56:03 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-11 21:56:03 [INFO] RUN: ip link set br-test-prod up
+2025-11-11 21:56:03 [INFO] RUN: ip netns add test-prod-public
+2025-11-11 21:56:03 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-11 21:56:03 [INFO] RUN: ip netns add test-prod-private
+2025-11-11 21:56:03 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-11 21:56:03 [INFO] RUN: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:56:03 [ERROR] Command failed: ip link add veth-pub type veth peer name veth-brp
+2025-11-11 21:56:03 [ERROR] RTNETLINK answers: File exists
+2025-11-11 21:59:41 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:59:41 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-11 21:59:41 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-11 21:59:41 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-11 21:59:41 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-11 21:59:41 [INFO] RUN: ip link del br-test-prod || true
+2025-11-11 21:59:50 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 21:59:50 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-11 21:59:50 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-11 21:59:50 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-11 21:59:50 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-11 22:00:05 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 22:00:05 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-11 22:00:05 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-11 22:00:05 [INFO] RUN: ip link set br-test-prod up
+2025-11-11 22:00:05 [INFO] RUN: ip netns add test-prod-public
+2025-11-11 22:00:05 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-11 22:00:05 [INFO] RUN: ip netns add test-prod-private
+2025-11-11 22:00:05 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-11 22:00:05 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-11 22:00:05 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-11 22:00:05 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-11 22:00:06 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-11 22:00:06 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-11 22:00:06 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-11 22:00:06 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-11 22:00:06 [INFO] net.ipv4.ip_forward = 1
+2025-11-11 22:00:06 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-11 22:00:56 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 22:00:56 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-11 22:00:56 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-11 22:00:56 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-11 22:00:56 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-11 22:00:56 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-11 22:00:56 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-11 22:00:56 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-11 22:00:56 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-11 22:00:56 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-11 22:00:56 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-11 22:00:57 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-11 22:00:57 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-11 22:00:57 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-11 22:00:57 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-11 22:00:57 [INFO] net.ipv4.ip_forward = 1
+2025-11-11 22:00:57 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-11 22:01:12 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-11 22:01:12 [INFO] RUN: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-11 22:01:12 [INFO] RUN: ip link set pr1-test-prod master br-test-prod
+2025-11-11 22:01:12 [INFO] RUN: ip link set pr2-dev-vpc master br-dev-vpc
+2025-11-11 22:01:12 [INFO] RUN: ip link set pr1-test-prod up
+2025-11-11 22:01:12 [INFO] RUN: ip link set pr2-dev-vpc up
+2025-11-11 22:01:12 [INFO] RUN: ip route add 10.20.0.0/16 dev pr1-test-prod
+2025-11-11 22:01:12 [ERROR] Command failed: ip route add 10.20.0.0/16 dev pr1-test-prod
+2025-11-11 22:01:12 [ERROR] RTNETLINK answers: File exists
+2025-11-12 16:19:42 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:21:26 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:21:26 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-12 16:21:26 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-12 16:21:26 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-12 16:21:26 [INFO] RUN: ip link del br-test-prod || true
+2025-11-12 16:21:54 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:21:54 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-12 16:21:54 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-12 16:21:54 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-12 16:21:54 [WARNING] Cannot remove namespace file "/run/netns/test-prod-public": No such file or directory
+2025-11-12 16:21:54 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-12 16:21:54 [WARNING] Cannot remove namespace file "/run/netns/test-prod-private": No such file or directory
+2025-11-12 16:21:54 [INFO] RUN: ip link del br-test-prod || true
+2025-11-12 16:21:54 [WARNING] Cannot find device "br-test-prod"
+2025-11-12 16:22:09 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:22:09 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-12 16:22:09 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-12 16:22:09 [INFO] RUN: ip link set br-test-prod up
+2025-11-12 16:22:09 [INFO] RUN: ip netns add test-prod-public
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-12 16:22:09 [INFO] RUN: ip netns add test-prod-private
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-12 16:22:09 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-12 16:22:09 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-12 16:22:09 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-12 16:22:09 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-12 16:22:09 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-12 16:22:09 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-12 16:22:09 [INFO] net.ipv4.ip_forward = 1
+2025-11-12 16:22:09 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-12 16:26:23 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:26:23 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-12 16:26:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:23 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-12 16:26:23 [INFO] RUN: ip link del br-test-prod || true
+2025-11-12 16:26:47 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:26:47 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-12 16:26:47 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:26:47 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-12 16:26:47 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-12 16:27:02 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:27:02 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-12 16:27:02 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-12 16:27:02 [INFO] RUN: ip link set br-test-prod up
+2025-11-12 16:27:02 [INFO] RUN: ip netns add test-prod-public
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-12 16:27:02 [INFO] RUN: ip netns add test-prod-private
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-12 16:27:02 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-12 16:27:02 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-12 16:27:02 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-12 16:27:02 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-12 16:27:02 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-12 16:27:02 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-12 16:27:02 [INFO] net.ipv4.ip_forward = 1
+2025-11-12 16:27:02 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-12 16:27:16 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:27:16 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-12 16:27:16 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-12 16:27:16 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-12 16:27:16 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-12 16:27:16 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-12 16:27:16 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-12 16:27:16 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-12 16:27:16 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-12 16:27:16 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-12 16:27:16 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-12 16:27:17 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-12 16:27:17 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-12 16:27:17 [INFO] net.ipv4.ip_forward = 1
+2025-11-12 16:27:17 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-12 16:27:53 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:27:53 [INFO] RUN: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-12 16:27:53 [ERROR] Command failed: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-12 16:27:53 [ERROR] RTNETLINK answers: File exists
+2025-11-12 16:27:53 [INFO] RUN: ip link set pr1-test-prod master br-test-prod
+2025-11-12 16:27:53 [INFO] RUN: ip link set pr2-dev-vpc master br-dev-vpc
+2025-11-12 16:27:53 [INFO] RUN: ip link set pr1-test-prod up
+2025-11-12 16:27:53 [INFO] RUN: ip link set pr2-dev-vpc up
+2025-11-12 16:27:53 [INFO] RUN: ip route add 10.20.0.0/16 dev pr1-test-prod || true
+2025-11-12 16:27:53 [WARNING] RTNETLINK answers: File exists
+2025-11-12 16:27:53 [INFO] RUN: ip route add 10.10.0.0/16 dev pr2-dev-vpc || true
+2025-11-12 16:27:53 [WARNING] RTNETLINK answers: File exists
+2025-11-12 16:29:01 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-12 16:29:01 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-12 16:29:01 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-12 16:29:01 [WARNING] iptables: No chain/target/match by that name.
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -N SG-TEST-PROD-P
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -I INPUT 1 -j SG-TEST-PROD-P
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -A SG-TEST-PROD-P -p tcp --dport 22 -j ACCEPT
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -A SG-TEST-PROD-P -p icmp -j ACCEPT
+2025-11-12 16:29:01 [INFO] RUN: ip netns exec test-prod-public iptables -A SG-TEST-PROD-P -j DROP
+2025-11-13 00:27:17 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 00:27:17 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:17 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:17 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 00:27:17 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:17 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 00:27:17 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 00:27:35 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 00:27:35 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 00:27:35 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 00:27:35 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 00:27:35 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 00:28:12 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 00:28:12 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 00:28:12 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 00:28:12 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 00:28:12 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 00:28:12 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 00:28:12 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 00:28:12 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 00:28:12 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 00:28:12 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 00:28:12 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 00:28:12 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 00:28:12 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 00:28:12 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 00:28:26 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 00:28:26 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 00:28:26 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 00:28:26 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 00:28:26 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 00:28:26 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 00:28:26 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 00:28:26 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 00:28:26 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 00:28:26 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 00:28:26 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 00:28:26 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 00:28:26 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 00:28:26 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 02:07:23 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:07:23 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:07:23 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 02:07:23 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 02:08:01 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:08:02 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 02:08:02 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 02:08:02 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 02:08:02 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 02:08:02 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 02:08:02 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 02:08:02 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 02:08:02 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 02:08:02 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 02:08:02 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 02:08:02 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 02:08:02 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 02:08:02 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 02:08:35 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:08:35 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 02:08:35 [WARNING] Error: ipv4: Address already assigned.
+2025-11-13 02:08:35 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 02:08:35 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 02:08:35 [ERROR] Command failed: ip netns add dev-vpc-public
+2025-11-13 02:08:35 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-public": File exists
+2025-11-13 02:08:35 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 02:08:35 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 02:08:35 [ERROR] Command failed: ip netns add dev-vpc-private
+2025-11-13 02:08:35 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-private": File exists
+2025-11-13 02:08:35 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 02:08:35 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:08:35 [ERROR] Command failed: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:08:35 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:08:35 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:08:35 [ERROR] Command failed: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:08:35 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 02:08:35 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 02:08:35 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 02:08:35 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:08:35 [ERROR] Command failed: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:08:35 [ERROR] Error: ipv4: Address already assigned.
+2025-11-13 02:21:15 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:21:15 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:21:15 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:21:15 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 02:21:15 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 02:22:07 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:22:07 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 02:22:07 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 02:22:07 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 02:22:07 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 02:22:07 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 02:22:07 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 02:22:07 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 02:22:07 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 02:22:07 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 02:22:07 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 02:22:07 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 02:22:07 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 02:22:07 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 02:22:24 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:22:24 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 02:22:24 [WARNING] Error: ipv4: Address already assigned.
+2025-11-13 02:22:24 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 02:22:24 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 02:22:24 [ERROR] Command failed: ip netns add dev-vpc-public
+2025-11-13 02:22:24 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-public": File exists
+2025-11-13 02:22:24 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 02:22:24 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 02:22:24 [ERROR] Command failed: ip netns add dev-vpc-private
+2025-11-13 02:22:24 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-private": File exists
+2025-11-13 02:22:24 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 02:22:24 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:22:24 [ERROR] Command failed: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:22:24 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:22:24 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:22:24 [ERROR] Command failed: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:22:24 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 02:22:24 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 02:22:24 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 02:22:24 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:22:24 [ERROR] Command failed: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:22:24 [ERROR] Error: ipv4: Address already assigned.
+2025-11-13 02:25:58 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:25:58 [INFO] RUN: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-13 02:25:58 [ERROR] Command failed: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-13 02:25:58 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:25:58 [INFO] RUN: ip link set pr1-test-prod master br-test-prod
+2025-11-13 02:25:58 [INFO] RUN: ip link set pr2-dev-vpc master br-dev-vpc
+2025-11-13 02:25:58 [INFO] RUN: ip link set pr1-test-prod up
+2025-11-13 02:25:58 [INFO] RUN: ip link set pr2-dev-vpc up
+2025-11-13 02:25:58 [INFO] RUN: ip route add 10.20.0.0/16 dev pr1-test-prod || true
+2025-11-13 02:25:58 [WARNING] RTNETLINK answers: File exists
+2025-11-13 02:25:58 [INFO] RUN: ip route add 10.10.0.0/16 dev pr2-dev-vpc || true
+2025-11-13 02:25:58 [WARNING] RTNETLINK answers: File exists
+2025-11-13 02:26:30 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 02:26:30 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 02:26:30 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 02:26:30 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -N SG-DEV-VPC-P
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -I INPUT 1 -j SG-DEV-VPC-P
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -A SG-DEV-VPC-P -p icmp -j ACCEPT
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -A SG-DEV-VPC-P -p tcp --dport 22 -j ACCEPT
+2025-11-13 02:26:30 [INFO] RUN: ip netns exec dev-vpc-public iptables -A SG-DEV-VPC-P -j DROP
+2025-11-13 02:27:13 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:27:13 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:13 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:27:13 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:27:13 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:27:14 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:14 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:27:14 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:14 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 02:27:14 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 02:27:22 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:27:22 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:22 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 02:27:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:27:22 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 02:27:22 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 02:32:34 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:32:34 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 02:32:34 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 02:32:34 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 02:32:34 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 02:32:34 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 02:32:34 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 02:32:34 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 02:32:34 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 02:32:34 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 02:32:34 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 02:32:34 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 02:32:34 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 02:32:34 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 02:32:41 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:32:41 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 02:32:41 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 02:32:41 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 02:32:41 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 02:32:41 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 02:32:41 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 02:32:41 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 02:32:41 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:32:41 [ERROR] Command failed: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:32:41 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:32:41 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:32:41 [ERROR] Command failed: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:32:41 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 02:32:41 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 02:32:41 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 02:32:41 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:32:41 [ERROR] Command failed: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:32:41 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 02:36:19 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:36:19 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 02:36:19 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 02:36:19 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 02:36:19 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 02:36:30 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:36:30 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 02:36:30 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 02:36:30 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 02:36:30 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 02:36:30 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 02:36:30 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 02:36:31 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 02:36:31 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 02:36:31 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 02:36:31 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 02:36:31 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 02:36:31 [ERROR] Command failed: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 02:36:31 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:36:31 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 02:36:31 [ERROR] Command failed: ip link set vns-test-prod netns test-prod-private
+2025-11-13 02:36:31 [ERROR] Cannot find device "vns-test-prod"
+2025-11-13 02:36:31 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 02:36:31 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 02:36:31 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 02:36:31 [ERROR] Command failed: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 02:36:31 [ERROR] Cannot find device "vns-test-prod"
+2025-11-13 02:36:39 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 02:36:40 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 02:36:40 [WARNING] Error: ipv4: Address already assigned.
+2025-11-13 02:36:40 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 02:36:40 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 02:36:40 [ERROR] Command failed: ip netns add dev-vpc-public
+2025-11-13 02:36:40 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-public": File exists
+2025-11-13 02:36:40 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 02:36:40 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 02:36:40 [ERROR] Command failed: ip netns add dev-vpc-private
+2025-11-13 02:36:40 [ERROR] Cannot create namespace file "/run/netns/dev-vpc-private": File exists
+2025-11-13 02:36:40 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 02:36:40 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:36:40 [ERROR] Command failed: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 02:36:40 [ERROR] RTNETLINK answers: File exists
+2025-11-13 02:36:40 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:36:40 [ERROR] Command failed: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 02:36:40 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 02:36:40 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 02:36:40 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 02:36:40 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:36:40 [ERROR] Command failed: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 02:36:40 [ERROR] Cannot find device "pns-dev-vpc"
+2025-11-13 07:50:40 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:50:40 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 07:50:40 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 07:50:40 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 07:50:40 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:50:40 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 07:50:40 [WARNING] iptables: Bad rule (does a matching rule exist in that chain?).
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:50:40 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:50:40 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 07:50:40 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 07:50:59 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:50:59 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 07:50:59 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 07:50:59 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 07:50:59 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 07:51:00 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 07:51:00 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 07:51:00 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 07:51:00 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 07:51:00 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 07:51:00 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 07:51:00 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 07:51:00 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 07:51:00 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:51:00 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 07:51:00 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 07:51:00 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 07:51:00 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 07:51:00 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 07:51:00 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 07:51:00 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 07:51:00 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 07:51:00 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 07:51:00 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 07:51:00 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 07:51:00 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 07:51:00 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 07:53:59 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:53:59 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 07:53:59 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 07:53:59 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:53:59 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 07:53:59 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 07:53:59 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 07:53:59 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 07:54:14 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:54:14 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 07:54:14 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 07:54:14 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 07:54:14 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 07:54:14 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 07:54:14 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 07:54:14 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 07:54:14 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 07:54:14 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 07:54:14 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 07:54:14 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 07:54:14 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 07:54:14 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 07:54:14 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 07:54:14 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 07:54:14 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 07:54:14 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 07:54:14 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 07:54:14 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 07:54:14 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 07:54:14 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 07:54:14 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 07:54:14 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 07:54:14 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 07:54:14 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 07:54:14 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:02:21 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:02:22 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 08:02:22 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 08:02:22 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:02:22 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:02:22 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:02:22 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 08:02:22 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 08:02:35 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:02:35 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 08:02:35 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 08:02:35 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 08:02:35 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 08:02:35 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 08:02:35 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 08:02:35 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 08:02:35 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 08:02:35 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 08:02:35 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 08:02:35 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 08:02:35 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 08:02:36 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 08:02:36 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 08:02:36 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 08:02:36 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 08:02:36 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 08:02:36 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 08:02:36 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:02:36 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:02:36 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:02:51 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:02:51 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 08:02:51 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 08:02:51 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 08:02:51 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 08:02:51 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 08:02:51 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 08:02:51 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 08:02:51 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 08:02:51 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 08:02:51 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 08:02:51 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:02:51 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:02:51 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:04:59 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:04:59 [INFO] RUN: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-13 08:04:59 [ERROR] Command failed: ip link add pr1-test-prod type veth peer name pr2-dev-vpc
+2025-11-13 08:04:59 [ERROR] RTNETLINK answers: File exists
+2025-11-13 08:04:59 [INFO] RUN: ip link set pr1-test-prod master br-test-prod
+2025-11-13 08:04:59 [INFO] RUN: ip link set pr2-dev-vpc master br-dev-vpc
+2025-11-13 08:04:59 [INFO] RUN: ip link set pr1-test-prod up
+2025-11-13 08:04:59 [INFO] RUN: ip link set pr2-dev-vpc up
+2025-11-13 08:04:59 [INFO] RUN: ip route add 10.20.0.0/16 dev pr1-test-prod || true
+2025-11-13 08:04:59 [WARNING] RTNETLINK answers: File exists
+2025-11-13 08:04:59 [INFO] RUN: ip route add 10.10.0.0/16 dev pr2-dev-vpc || true
+2025-11-13 08:04:59 [WARNING] RTNETLINK answers: File exists
+2025-11-13 08:07:23 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:07:23 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 08:07:23 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 08:07:23 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:07:23 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:07:23 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:07:23 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 08:07:23 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 08:07:34 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:07:34 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 08:07:34 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 08:07:34 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 08:07:34 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 08:07:34 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 08:07:34 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 08:07:34 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 08:07:34 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 08:07:34 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 08:07:34 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:07:34 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:07:34 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:07:34 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:07:34 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 08:07:34 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 08:07:34 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 08:07:34 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 08:07:34 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 08:07:34 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 08:07:34 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 08:07:34 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 08:07:34 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 08:07:34 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 08:07:35 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 08:07:35 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 08:07:35 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 08:07:35 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 08:07:35 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 08:07:35 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 08:07:35 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 08:07:35 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 08:07:35 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 08:07:35 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:07:35 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:07:35 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:14:56 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:14:56 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 08:14:56 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 08:14:56 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:14:56 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:14:56 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:14:56 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 08:14:56 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 08:15:14 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:15:14 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 08:15:14 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 08:15:14 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 08:15:14 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 08:15:14 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 08:15:14 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 08:15:14 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 08:15:14 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 08:15:14 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 08:15:14 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 08:15:14 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:15:14 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:15:14 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:15:39 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:15:39 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 08:15:39 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 08:15:39 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 08:15:39 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 08:15:39 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 08:15:39 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 08:15:39 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 08:15:39 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 08:15:39 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 08:15:39 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 08:15:39 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 08:15:39 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 08:15:40 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 08:15:40 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 08:15:40 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 08:15:40 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:15:40 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:15:40 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:19:54 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:19:54 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:19:54 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:19:54 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:54 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns del test-prod-public || true
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-public iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-public iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-public iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "test-prod-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -D INPUT -j SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-TEST-PROD-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -F SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec test-prod-private iptables -X SG-TEST-PROD-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns del test-prod-private || true
+2025-11-13 08:19:55 [INFO] RUN: ip link del br-test-prod || true
+2025-11-13 08:19:55 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:19:55 [INFO] RUN: iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE || true
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns del dev-vpc-public || true
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-public iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] Cannot open network namespace "dev-vpc-public": No such file or directory
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -D INPUT -j SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables v1.8.10 (nf_tables): Chain 'SG-DEV-VPC-P' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -F SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns exec dev-vpc-private iptables -X SG-DEV-VPC-P || true
+2025-11-13 08:19:55 [WARNING] iptables: No chain/target/match by that name.
+2025-11-13 08:19:55 [INFO] RUN: ip netns del dev-vpc-private || true
+2025-11-13 08:19:55 [INFO] RUN: ip link del br-dev-vpc || true
+2025-11-13 08:20:05 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:20:05 [INFO] RUN: ip link add name br-test-prod type bridge
+2025-11-13 08:20:05 [INFO] RUN: ip addr add 10.10.0.1/16 dev br-test-prod || true
+2025-11-13 08:20:05 [INFO] RUN: ip link set br-test-prod up
+2025-11-13 08:20:05 [INFO] RUN: ip netns add test-prod-public
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-public ip link set lo up
+2025-11-13 08:20:05 [INFO] RUN: ip netns add test-prod-private
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-private ip link set lo up
+2025-11-13 08:20:05 [INFO] RUN: ip link add pns-test-prod type veth peer name pbr-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip link set pns-test-prod netns test-prod-public
+2025-11-13 08:20:05 [INFO] RUN: ip link set pbr-test-prod master br-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip link set pbr-test-prod up
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-public ip addr add 10.10.0.2/24 dev pns-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-public ip link set pns-test-prod up
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-public ip route add 10.10.0.0/16 dev pns-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-public ip route add default via 10.10.0.1
+2025-11-13 08:20:05 [INFO] RUN: ip link add vns-test-prod type veth peer name vbr-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip link set vns-test-prod netns test-prod-private
+2025-11-13 08:20:05 [INFO] RUN: ip link set vbr-test-prod master br-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip link set vbr-test-prod up
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-private ip addr add 10.10.1.2/24 dev vns-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-private ip link set vns-test-prod up
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-private ip route add 10.10.0.0/16 dev vns-test-prod
+2025-11-13 08:20:05 [INFO] RUN: ip netns exec test-prod-private ip route add default via 10.10.0.1
+2025-11-13 08:20:05 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:20:05 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:20:05 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o ens5 -j MASQUERADE
+2025-11-13 08:20:19 [INFO] 
+
+========== VPCCTL RUN STARTED ==========
+2025-11-13 08:20:19 [INFO] RUN: ip link add name br-dev-vpc type bridge
+2025-11-13 08:20:19 [INFO] RUN: ip addr add 10.20.0.1/16 dev br-dev-vpc || true
+2025-11-13 08:20:19 [INFO] RUN: ip link set br-dev-vpc up
+2025-11-13 08:20:19 [INFO] RUN: ip netns add dev-vpc-public
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-public ip link set lo up
+2025-11-13 08:20:19 [INFO] RUN: ip netns add dev-vpc-private
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-private ip link set lo up
+2025-11-13 08:20:19 [INFO] RUN: ip link add pns-dev-vpc type veth peer name pbr-dev-vpc
+2025-11-13 08:20:19 [INFO] RUN: ip link set pns-dev-vpc netns dev-vpc-public
+2025-11-13 08:20:19 [INFO] RUN: ip link set pbr-dev-vpc master br-dev-vpc
+2025-11-13 08:20:19 [INFO] RUN: ip link set pbr-dev-vpc up
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-public ip addr add 10.20.0.2/24 dev pns-dev-vpc
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-public ip link set pns-dev-vpc up
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-public ip route add 10.20.0.0/16 dev pns-dev-vpc
+2025-11-13 08:20:19 [INFO] RUN: ip netns exec dev-vpc-public ip route add default via 10.20.0.1
+2025-11-13 08:20:20 [INFO] RUN: ip link add vns-dev-vpc type veth peer name vbr-dev-vpc
+2025-11-13 08:20:20 [INFO] RUN: ip link set vns-dev-vpc netns dev-vpc-private
+2025-11-13 08:20:20 [INFO] RUN: ip link set vbr-dev-vpc master br-dev-vpc
+2025-11-13 08:20:20 [INFO] RUN: ip link set vbr-dev-vpc up
+2025-11-13 08:20:20 [INFO] RUN: ip netns exec dev-vpc-private ip addr add 10.20.1.2/24 dev vns-dev-vpc
+2025-11-13 08:20:20 [INFO] RUN: ip netns exec dev-vpc-private ip link set vns-dev-vpc up
+2025-11-13 08:20:20 [INFO] RUN: ip netns exec dev-vpc-private ip route add 10.20.0.0/16 dev vns-dev-vpc
+2025-11-13 08:20:20 [INFO] RUN: ip netns exec dev-vpc-private ip route add default via 10.20.0.1
+2025-11-13 08:20:20 [INFO] RUN: sysctl -w net.ipv4.ip_forward=1
+2025-11-13 08:20:20 [INFO] net.ipv4.ip_forward = 1
+2025-11-13 08:20:20 [INFO] RUN: iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o ens5 -j MASQUERADE
