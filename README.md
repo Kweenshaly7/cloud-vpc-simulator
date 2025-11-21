@@ -12,6 +12,16 @@ Permissions: sudo access is required for all networking commands (ip, iptables, 
 
 Software: Python 3 (for the controller script and simple HTTP servers).
 
+📁 Project Structure
+cloud-vpc-simulator/
+ ├── vpcctl.py
+ ├── cleanup.sh
+ ├── README.md
+ ├── index.html
+ ├── internet_index.html
+ ├── vpcctl.log
+ └── .git
+
 Setup and Environment Preparation
 
 Follow these steps to set up the clean, working environment needed to run the main demonstration script.
