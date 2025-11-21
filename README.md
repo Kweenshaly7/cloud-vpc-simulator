@@ -1,6 +1,6 @@
 # Cloud VPC Simulator (vpcctl.py)
 
-This project simulates core Virtual Private Cloud (VPC) functionalities—including isolated subnets, Network Address Translation (NAT) Gateway, VPC Peering, and Security Groups—using Linux networking primitives (network namespaces, bridges, and iptables).
+This project simulates core Virtual Private Cloud (VPC) functionalities, including isolated subnets, Network Address Translation (NAT) Gateway, VPC Peering, and Security Groups, using Linux networking primitives (network namespaces, bridges, and iptables).
 
 Prerequisites
 
